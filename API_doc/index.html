@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Equb API Documentation</title>
+    <style>
+      /* Reset some default styles */
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      /* General styling */
+      body {
+        font-family: "Arial", sans-serif;
+        background-color: #f9f9f9;
+        color: #333;
+        line-height: 1.6;
+        padding: 20px;
+      }
+
+      h1,
+      h2,
+      p {
+        margin-bottom: 20px;
+      }
+
+      /* Styling for the container */
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 20px;
+        background-color: #fff;
+        border-radius: 10px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+      }
+
+      /* Main heading */
+      h1 {
+        font-size: 2.5rem;
+        color: #ff0077;
+        text-align: center;
+      }
+
+      /* Sub headings */
+      h2 {
+        font-size: 1.8rem;
+        color: #0056b3;
+        border-bottom: 2px solid #0056b3;
+        padding-bottom: 5px;
+        margin-bottom: 10px;
+      }
+
+      /* Styling for each endpoint section */
+      .endpoint {
+        margin-bottom: 40px;
+        padding: 20px;
+        background-color: #f4f4f4;
+        border-left: 5px solid #ff0077;
+        border-radius: 8px;
+      }
+
+      .endpoint p {
+        margin-bottom: 10px;
+      }
+
+      /* Code block styling */
+      pre {
+        background-color: #333;
+        color: #f1f1f1;
+        padding: 15px;
+        border-radius: 8px;
+        font-size: 1rem;
+        line-height: 1.4;
+        overflow-x: auto;
+        margin-top: 10px;
+      }
+
+      /* Request and Response block styling */
+      .example {
+        margin-top: 15px;
+      }
+
+      /* Example title styling */
+      .example strong {
+        display: block;
+        font-size: 1.2rem;
+        color: #333;
+        margin-bottom: 5px;
+      }
+
+      /* Table styling for parameters */
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-bottom: 20px;
+      }
+
+      th,
+      td {
+        padding: 10px;
+        border: 1px solid #ddd;
+        text-align: left;
+      }
+
+      th {
+        background-color: #ff0077;
+        color: white;
+      }
+
+      /* Additional styles */
+      ul {
+        margin-left: 20px;
+        margin-bottom: 10px;
+      }
+
+      ul li {
+        margin-bottom: 5px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>Equb API Documentation</h1>
+      <p>
+        <strong>Base URL:</strong>
+        <a href="https://equbapi.nehabi.com/api/v1"
+          >https://equbapi.nehabi.com/api/v1</a
+        >
+      </p>
+
+      <div class="endpoint">
+        <h2>1. Get All Settings</h2>
+        <p><strong>Endpoint:</strong> GET /setting</p>
+        <p>
+          <strong>Description:</strong> Retrieves a paginated list of settings.
+        </p>
+        <p><strong>Query Parameters:</strong></p>
+        <table>
+          <thead>
+            <tr>
+              <th>Parameter</th>
+              <th>Type</th>
+              <th>Description</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>_page</strong></td>
+              <td>optional</td>
+              <td>Specifies the page number for pagination.</td>
+            </tr>
+            <tr>
+              <td><strong>_limit</strong></td>
+              <td>optional</td>
+              <td>Specifies the number of results per page.</td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="example">
+          <strong>Example Request:</strong>
+          <pre>
+GET https://equbapi.nehabi.com/api/v1/setting?_page=1&_limit=10</pre
+          >
+        </div>
+        <div class="example">
+          <strong>Response:</strong>
+          <pre>
+[
+    {
+        "id": "abc123",
+        "name": "notificationTime",
+        "numericValue": 20
+    },
+    {
+        "id": "def456",
+        "name": "maxUsers",
+        "numericValue": 50
+    }
+]</pre
+          >
+        </div>
+      </div>
+
+      <div class="endpoint">
+        <h2>2. Get Setting by ID</h2>
+        <p><strong>Endpoint:</strong> GET /setting/:id</p>
+        <p>
+          <strong>Description:</strong> Retrieves a specific setting by its ID.
+        </p>
+        <p><strong>Path Parameter:</strong></p>
+        <ul>
+          <li><strong>:id</strong>: The ID of the setting to retrieve.</li>
+        </ul>
+        <div class="example">
+          <strong>Example Request:</strong>
+          <pre>GET https://equbapi.nehabi.com/api/v1/setting/abc123</pre>
+        </div>
+        <div class="example">
+          <strong>Response:</strong>
+          <pre>
+{
+    "id": "abc123",
+    "name": "notificationTime",
+    "numericValue": 20
+}</pre
+          >
+        </div>
+      </div>
+
+      <div class="endpoint">
+        <h2>3. Add New Setting</h2>
+        <p><strong>Endpoint:</strong> POST /setting</p>
+        <p><strong>Description:</strong> Creates a new setting.</p>
+        <p><strong>Request Body:</strong></p>
+        <pre>
+{
+    "name": "notificationTime",
+    "numericValue": 20
+}</pre
+        >
+        <div class="example">
+          <strong>Example Request:</strong>
+          <pre>
+POST https://equbapi.nehabi.com/api/v1/setting
+Content-Type: application/json
+
+{
+    "name": "notificationTime",
+    "numericValue": 20
+}</pre
+          >
+        </div>
+        <div class="example">
+          <strong>Response:</strong>
+          <pre>
+{
+    "id": "ghi789",
+    "name": "notificationTime",
+    "numericValue": 20
+}</pre
+          >
+        </div>
+      </div>
+
+      <div class="endpoint">
+        <h2>4. Update Setting by ID</h2>
+        <p><strong>Endpoint:</strong> PATCH /setting/:id</p>
+        <p>
+          <strong>Description:</strong> Updates an existing setting by its ID.
+        </p>
+        <p><strong>Path Parameter:</strong></p>
+        <ul>
+          <li><strong>:id</strong>: The ID of the setting to update.</li>
+        </ul>
+        <p><strong>Request Body:</strong></p>
+        <pre>
+{
+    "name": "notificationTime",
+    "numericValue": 25
+}</pre
+        >
+        <div class="example">
+          <strong>Example Request:</strong>
+          <pre>
+PATCH https://equbapi.nehabi.com/api/v1/setting/abc123
+Content-Type: application/json
+
+{
+    "name": "notificationTime",
+    "numericValue": 25
+}</pre
+          >
+        </div>
+        <div class="example">
+          <strong>Response:</strong>
+          <pre>
+{
+    "id": "abc123",
+    "name": "notificationTime",
+    "numericValue": 25
+}</pre
+          >
+        </div>
+      </div>
+
+      <div class="endpoint">
+        <h2>5. Get All Setting Types</h2>
+        <p><strong>Endpoint:</strong> GET /setting-types</p>
+        <p>
+          <strong>Description:</strong> Retrieves a paginated list of setting
+          types.
+        </p>
+        <p><strong>Query Parameters:</strong></p>
+        <table>
+          <thead>
+            <tr>
+              <th>Parameter</th>
+              <th>Type</th>
+              <th>Description</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>_page</strong></td>
+              <td>optional</td>
+              <td>Specifies the page number for pagination.</td>
+            </tr>
+            <tr>
+              <td><strong>_limit</strong></td>
+              <td>optional</td>
+              <td>Specifies the number of results per page.</td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="example">
+          <strong>Example Request:</strong>
+          <pre>
+GET https://equbapi.nehabi.com/api/v1/setting-types?_page=1&_limit=10</pre
+          >
+        </div>
+        <div class="example">
+          <strong>Response:</strong>
+          <pre>
+[
+    {
+        "id": "type1",
+        "name": "Integer"
+    },
+    {
+        "id": "type2",
+        "name": "String"
+    }
+]</pre
+          >
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

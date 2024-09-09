@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Setting Component Documentation</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        line-height: 1.6;
+        background-color: #f4f4f4;
+        margin: 0;
+        padding: 0 20px;
+      }
+      .container {
+        max-width: 800px;
+        margin: 20px auto;
+        background: #fff;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      }
+      h1,
+      h2,
+      h3 {
+        color: #333;
+      }
+      pre {
+        background: #f8f8f8;
+        padding: 15px;
+        border-radius: 5px;
+        overflow-x: auto;
+      }
+      code {
+        font-family: Consolas, "Courier New", monospace;
+        background: #f4f4f4;
+        padding: 2px 4px;
+        border-radius: 4px;
+      }
+      ul {
+        margin: 10px 0;
+        padding-left: 20px;
+      }
+      li {
+        margin: 5px 0;
+      }
+      .code-block {
+        background: #f0f0f0;
+        padding: 10px;
+        border-radius: 5px;
+        margin-bottom: 20px;
+      }
+      .section {
+        margin-bottom: 30px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>Setting Component Documentation</h1>
+      <p>
+        This documentation provides an overview of the
+        <code>Setting</code> component used in a React application. This
+        component is designed to handle settings management, including adding,
+        editing, and deleting settings.
+      </p>
+
+      <div class="section">
+        <h2>Imports</h2>
+        <p>
+          The following modules and components are imported into the
+          <code>Setting</code> component:
+        </p>
+        <div class="code-block">
+          <pre><code>import { useEffect, useState } from "react";
+import { FiChevronDown, FiEdit, FiTrash, FiSettings } from "react-icons/fi";
+import { MdAdd } from "react-icons/md";
+import { RootState, AppDispatch } from "../Redux/store";
+import { fetchSettings, deleteSetting, addSetting, updateSetting } from "../Redux/features/settings/settingsSlice";
+import { useDispatch, useSelector } from "react-redux";</code></pre>
+        </div>
+      </div>
+
+      <div class="section">
+        <h2>Component State</h2>
+        <p>The component uses the following state variables:</p>
+        <ul>
+          <li>
+            <code>showPopup</code> - Controls the visibility of the popup for
+            adding/editing settings.
+          </li>
+          <li>
+            <code>selectedSetting</code> - Holds the currently selected setting
+            type from the dropdown.
+          </li>
+          <li>
+            <code>inputValue</code> - Stores the numeric value associated with a
+            setting.
+          </li>
+          <li>
+            <code>customOption</code> - Holds the value of a custom option if
+            the user adds a new one.
+          </li>
+          <li>
+            <code>isEditing</code> - Tracks whether the component is in editing
+            mode.
+          </li>
+          <li>
+            <code>editingRowId</code> - Stores the ID of the setting being
+            edited.
+          </li>
+          <li>
+            <code>customOptions</code> - Stores a list of unique custom options
+            for the dropdown.
+          </li>
+        </ul>
+      </div>
+
+      <div class="section">
+        <h2>Component Lifecycle</h2>
+        <p>The component uses the following lifecycle hooks:</p>
+        <ul>
+          <li>
+            <code>useEffect</code> - Fetches settings when the component mounts
+            and updates the custom options list when the settings data changes.
+          </li>
+        </ul>
+        <div class="code-block">
+          <pre><code>useEffect(() => {
+    dispatch(fetchSettings());
+}, [dispatch]);
+
+useEffect(() => {
+    const uniqueOptions = Array.from(
+        new Set(settingsFetched.map((setting) => setting.name))
+    );
+    setCustomOptions(uniqueOptions);
+}, [settingsFetched]);</code></pre>
+        </div>
+      </div>
+
+      <div class="section">
+        <h2>Event Handlers</h2>
+        <p>The component defines several event handlers:</p>
+        <ul>
+          <li>
+            <code>handleDropdownChange</code> - Handles changes in the dropdown
+            for selecting a setting type.
+          </li>
+          <li>
+            <code>handleInputChange</code> - Handles input changes for the
+            numeric value.
+          </li>
+          <li>
+            <code>handleCustomOptionChange</code> - Handles changes for the
+            custom option input field.
+          </li>
+          <li>
+            <code>handleAddSetting</code> - Adds or updates a setting based on
+            the current state.
+          </li>
+          <li>
+            <code>handleEditSetting</code> - Prepares the component for editing
+            a specific setting.
+          </li>
+          <li>
+            <code>handleDeleteSetting</code> - Deletes a specific setting.
+          </li>
+        </ul>
+        <div class="code-block">
+          <pre><code>const handleDropdownChange = (event) => {
+    const value = event.target.value;
+    if (value === "Add Custom Option") {
+        setSelectedSetting(value);
+        setCustomOption("");
+    } else {
+        setSelectedSetting(value);
+    }
+};
+
+const handleInputChange = (e) => {
+    setInputValue(Number(e.target.value));
+};
+
+const handleCustomOptionChange = (e) => {
+    setCustomOption(e.target.value);
+};
+
+const handleAddSetting = () => {
+    if (selectedSetting === "Add Custom Option") {
+        if (customOption && inputValue && inputValue > 0) {
+            const newSetting = {
+                name: customOption,
+                numericValue: Number(inputValue),
+            };
+            dispatch(addSetting(newSetting));
+            setCustomOptions([...customOptions, customOption]);
+            setSelectedSetting("");
+            setCustomOption("");
+            setInputValue("");
+            setShowPopup(false);
+        }
+    } else {
+        if (selectedSetting && inputValue && inputValue > 0) {
+            const newSetting = {
+                name: selectedSetting,
+                numericValue: Number(inputValue),
+            };
+
+            if (isEditing && editingRowId) {
+                dispatch(updateSetting({ _id: editingRowId, ...newSetting }));
+                setIsEditing(false);
+            } else {
+                dispatch(addSetting(newSetting));
+            }
+
+            setSelectedSetting("");
+            setInputValue("");
+            setShowPopup(false);
+        }
+    }
+};</code></pre>
+        </div>
+      </div>
+
+      <div class="section">
+        <h2>Rendering</h2>
+        <p>
+          The component renders a list of settings in a table, and includes a
+          popup for adding or editing settings. The UI elements are styled with
+          Tailwind CSS classes.
+        </p>
+        <div class="code-block">
+          <pre><code>&lt;div className="flex flex-col items-center p-10 min-h-screen bg-pink-50"&gt;
+    &lt;div className="w-4/5 mb-8 flex items-center"&gt;
+        &lt;FiSettings size={28} className="text-pink-600 mr-3" /&gt;
+        &lt;h1 className="text-4xl font-bold text-pink-600"&gt;Settings&lt;/h1&gt;
+    &lt;/div&gt;
+    &lt;div className="w-4/5 mb-6 flex justify-end"&gt;
+        &lt;button
+            onClick={() =&gt; setShowPopup(true)}
+            className="px-6 py-2 bg-pink-500 text-white font-semibold rounded-md hover:bg-pink-600 transition flex space-x-2 items-center justify-center"&gt;
+            &lt;p className="text-x"&gt;Add&lt;/p&gt;
+            &lt;MdAdd size={20} /&gt;
+        &lt;/button&gt;
+    &lt;/div&gt;
+    {showPopup && (
+        &lt;div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-70"&gt;
+            &lt;div className="bg-white p-8 rounded-md shadow-lg w-96 relative"&gt;
+                &lt;h2 className="text-xl font-bold text-pink-600 mb-4"&gt;
+                    {isEditing ? "Edit Setting" : "Add Setting"}
+                &lt;/h2&gt;
+                &lt;!-- Dropdown and input fields go here --&gt;
+            &lt;/div&gt;
+        &lt;/div&gt;
+    )}
+    &lt;!-- Table of settings --&gt;
+&lt;/div&gt;</code></pre>
+        </div>
+      </div>
+
+      <div class="section">
+        <h2>Conclusion</h2>
+        <p>
+          The <code>Setting</code> component provides a flexible and interactive
+          interface for managing application settings. It leverages Redux for
+          state management, React Hooks for lifecycle management, and Tailwind
+          CSS for styling.
+        </p>
+      </div>
+    </div>
+  </body>
+</html>

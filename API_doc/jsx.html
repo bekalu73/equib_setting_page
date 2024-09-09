@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Setting Component Documentation</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        line-height: 1.6;
+        background-color: #f4f4f4;
+        margin: 0;
+        padding: 0 20px;
+      }
+      .container {
+        max-width: 800px;
+        margin: 20px auto;
+        background: #fff;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      }
+      h1,
+      h2,
+      h3 {
+        color: #333;
+      }
+      pre {
+        background: #f8f8f8;
+        padding: 15px;
+        border-radius: 5px;
+        overflow-x: auto;
+      }
+      code {
+        font-family: Consolas, "Courier New", monospace;
+        background: #f4f4f4;
+        padding: 2px 4px;
+        border-radius: 4px;
+      }
+      ul {
+        margin: 10px 0;
+        padding-left: 20px;
+      }
+      li {
+        margin: 5px 0;
+      }
+      .code-block {
+        background: #f0f0f0;
+        padding: 10px;
+        border-radius: 5px;
+        margin-bottom: 20px;
+      }
+      .section {
+        margin-bottom: 30px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>Setting Component Documentation</h1>
+      <p>
+        This documentation provides an overview of the
+        <code>Setting</code> component used in a React application. This
+        component is designed to handle settings management, including adding,
+        editing, and deleting settings.
+      </p>
+
+      <div class="section">
+        <h2>Imports</h2>
+        <p>
+          The following modules and components are imported into the
+          <code>Setting</code> component:
+        </p>
+        <div class="code-block">
+          <pre><code>import { useEffect, useState } from "react";
+import { FiChevronDown, FiEdit, FiTrash, FiSettings } from "react-icons/fi";
+import { MdAdd } from "react-icons/md";
+import { RootState, AppDispatch } from "../Redux/store";
+import { fetchSettings, deleteSetting, addSetting, updateSetting } from "../Redux/features/settings/settingsSlice";
+import { useDispatch, useSelector } from "react-redux";</code></pre>
+        </div>
+      </div>
+
+      <div class="section">
+        <h2>Component State</h2>
+        <p>The component uses the following state variables:</p>
+        <ul>
+          <li>
+            <code>showPopup</code> - Controls the visibility of the popup for
+            adding/editing settings.
+          </li>
+          <li>
+            <code>selectedSetting</code> - Holds the currently selected setting
+            type from the dropdown.
+          </li>
+          <li>
+            <code>inputValue</code> - Stores the numeric value associated with a
+            setting.
+          </li>
+          <li>
+            <code>customOption</code> - Holds the value of a custom option if
+            the user adds a new one.
+          </li>
+          <li>
+            <code>isEditing</code> - Tracks whether the component is in editing
+            mode.
+          </li>
+          <li>
+            <code>editingRowId</code> - Stores the ID of the setting being
+            edited.
+          </li>
+          <li>
+            <code>customOptions</code> - Stores a list of unique custom options
+            for the dropdown.
+          </li>
+        </ul>
+      </div>
+
+      <div class="section">
+        <h2>Component Lifecycle</h2>
+        <p>The component uses the following lifecycle hooks:</p>
+        <ul>
+          <li>
+            <code>useEffect</code> - Fetches settings when the component mounts
+            and updates the custom options list when the settings data changes.
+          </li>
+        </ul>
+        <div class="code-block">
+          <pre><code>useEffect(() => {
+    dispatch(fetchSettings());
+}, [dispatch]);
+
+useEffect(() => {
+    const uniqueOptions = Array.from(
+        new Set(settingsFetched.map((setting) => setting.name))
+    );
+    setCustomOptions(uniqueOptions);
+}, [settingsFetched]);</code></pre>
+        </div>
+      </div>
+
+      <div class="section">
+        <h2>Event Handlers</h2>
+        <p>The component defines several event handlers:</p>
+        <ul>
+          <li>
+            <code>handleDropdownChange</code> - Handles changes in the dropdown
+            for selecting a setting type.
+          </li>
+          <li>
+            <code>handleInputChange</code> - Handles input changes for the
+            numeric value.
+          </li>
+          <li>
+            <code>handleCustomOptionChange</code> - Handles changes for the
+            custom option input field.
+          </li>
+          <li>
+            <code>handleAddSetting</code> - Adds or updates a setting based on
+            the current state.
+          </li>
+          <li>
+            <code>handleEditSetting</code> - Prepares the component for editing
+            a specific setting.
+          </li>
+          <li>
+            <code>handleDeleteSetting</code> - Deletes a specific setting.
+          </li>
+        </ul>
+        <div class="code-block">
+          <pre><code>const handleDropdownChange = (event) => {
+    const value = event.target.value;
+    if (value === "Add Custom Option") {
+        setSelectedSetting(value);
+        setCustomOption("");
+    } else {
+        setSelectedSetting(value);
+    }
+};
+
+const handleInputChange = (e) => {
+    setInputValue(Number(e.target.value));
+};
+
+const handleCustomOptionChange = (e) => {
+    setCustomOption(e.target.value);
+};
+
+const handleAddSetting = () => {
+    if (selectedSetting === "Add Custom Option") {
+        if (customOption && inputValue && inputValue > 0) {
+            const newSetting = {
+                name: customOption,
+                numericValue: Number(inputValue),
+            };
+            dispatch(addSetting(newSetting));
+            setCustomOptions([...customOptions, customOption]);
+            setSelectedSetting("");
+            setCustomOption("");
+            setInputValue("");
+            setShowPopup(false);
+        }
+    } else {
+        if (selectedSetting && inputValue && inputValue > 0) {
+            const newSetting = {
+                name: selectedSetting,
+                numericValue: Number(inputValue),
+            };
+
+            if (isEditing && editingRowId) {
+                dispatch(updateSetting({ _id: editingRowId, ...newSetting }));
+                setIsEditing(false);
+            } else {
+                dispatch(addSetting(newSetting));
+            }
+
+            setSelectedSetting("");
+            setInputValue("");
+            setShowPopup(false);
+        }
+    }
+};</code></pre>
+        </div>
+      </div>
+
+      <div class="section">
+        <h2>Rendering</h2>
+        <p>
+          The component renders a list of settings in a table and includes a
+          popup for adding or editing settings. The UI elements are styled with
+          Tailwind CSS classes.
+        </p>
+        <p>Below is the JSX code used for rendering the component:</p>
+        <div class="code-block">
+          <pre><code>&lt;div className="flex flex-col items-center p-10 min-h-screen bg-pink-50"&gt;
+    &lt;!-- Header with settings title and icon --&gt;
+    &lt;div className="w-4/5 mb-8 flex items-center"&gt;
+        &lt;FiSettings size={28} className="text-pink-600 mr-3" /&gt;
+        &lt;h1 className="text-4xl font-bold text-pink-600"&gt;Settings&lt;/h1&gt;
+    &lt;/div&gt;
+
+    &lt;!-- Button to open popup for adding a setting --&gt;
+    &lt;div className="w-4/5 mb-6 flex justify-end"&gt;
+        &lt;button
+            onClick={() =&gt; setShowPopup(true)}
+            className="px-6 py-2 bg-pink-500 text-white font-semibold rounded-md hover:bg-pink-600 transition flex space-x-2 items-center justify-center"&gt;
+            &lt;p className="text-x"&gt;Add&lt;/p&gt;
+            &lt;MdAdd size={20} /&gt;
+        &lt;/button&gt;
+    &lt;/div&gt;
+
+    &lt;!-- Popup for adding or editing a setting --&gt;
+    {showPopup &amp;&amp; (
+        &lt;div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-70"&gt;
+            &lt;div className="bg-white p-8 rounded-md shadow-lg w-96 relative"&gt;
+                &lt;h2 className="text-xl font-bold text-pink-600 mb-4"&gt;
+                    {isEditing ? "Edit Setting" : "Add Setting"}
+                &lt;/h2&gt;
+
+                &lt;!-- Dropdown for selecting a setting type --&gt;
+                &lt;div className="relative mb-4"&gt;
+                    &lt;label className="block text-pink-600 mb-2"&gt;Setting Type&lt;/label&gt;
+                    &lt;div className="relative"&gt;
+                        &lt;select
+                            className="w-full px-4 py-2 border border-gray-300 rounded-md"
+                            value={selectedSetting}
+                            onChange={handleDropdownChange}&gt;
+                            &lt;option value=""&gt;Select a setting type&lt;/option&gt;
+                            {customOptions.map((option, index) =&gt; (
+                                &lt;option key={index} value={option}&gt;
+                                    {option}
+                                &lt;/option&gt;
+                            ))}
+                            &lt;option value="Add Custom Option"&gt;Add Custom Option&lt;/option&gt;
+                        &lt;/select&gt;
+                        &lt;FiChevronDown
+                            size={20}
+                            className="absolute top-1/2 right-3 transform -translate-y-1/2 text-gray-500"&gt;
+                        &lt;/FiChevronDown&gt;
+                    &lt;/div&gt;
+                &lt;/div&gt;
+
+                &lt;!-- Input field for custom option name --&gt;
+                {selectedSetting === "Add Custom Option" &amp;&amp; (
+                    &lt;div className="mb-4"&gt;
+                        &lt;label className="block text-pink-600 mb-2"&gt;Custom Option&lt;/label&gt;
+                        &lt;input
+                            type="text"
+                            value={customOption}
+                            onChange={handleCustomOptionChange}
+                            className="w-full px-4 py-2 border border-gray-300 rounded-md"&gt;
+                        &lt;/input&gt;
+                    &lt;/div&gt;
+                )}
+
+                &lt;!-- Input field for numeric value --&gt;
+                &lt;div className="mb-4"&gt;
+                    &lt;label className="block text-pink-600 mb-2"&gt;Value&lt;/label&gt;
+                    &lt;input
+                        type="number"
+                        value={inputValue}
+                        onChange={handleInputChange}
+                        className="w-full px-4 py-2 border border-gray-300 rounded-md"&gt;
+                    &lt;/input&gt;
+                &lt;/div&gt;
+
+                &lt;!-- Button to add or update setting --&gt;
+                &lt;div className="flex justify-between"&gt;
+                    &lt;button
+                        onClick={() =&gt; setShowPopup(false)}
+                        className="px-4 py-2 bg-gray-300 text-gray-800 rounded-md"&gt;
+                        Cancel
+                    &lt;/button&gt;
+                    &lt;button
+                        onClick={handleAddSetting}
+                        className="px-4 py-2 bg-pink-500 text-white font-semibold rounded-md hover:bg-pink-600 transition"&gt;
+                        {isEditing ? "Update Setting" : "Add Setting"}
+                    &lt;/button&gt;
+                &lt;/div&gt;
+            &lt;/div&gt;
+        &lt;/div&gt;
+    )}
+
+    &lt;!-- Settings table --&gt;
+    &lt;div className="w-4/5 bg-white shadow-lg rounded-lg overflow-hidden"&gt;
+        &lt;table className="min-w-full bg-white"&gt;
+            &lt;thead className="bg-pink-500 text-white"&gt;
+                &lt;tr&gt;
+                    &lt;th className="w-2/5 py-3 px-4 text-left"&gt;Setting&lt;/th&gt;
+                    &lt;th className="w-1/5 py-3 px-4 text-left"&gt;Value&lt;/th&gt;
+                    &lt;th className="w-1/5 py-3 px-4 text-center"&gt;Actions&lt;/th&gt;
+                &lt;/tr&gt;
+            &lt;/thead&gt;
+            &lt;tbody&gt;
+                {settingsFetched.map((setting, index) =&gt; (
+                    &lt;tr key={setting._id} className={`text-gray-700 ${index % 2 === 0 ? "bg-gray-50" : ""}`}&gt;
+                        &lt;td className="py-3 px-4"&gt;{setting.name}&lt;/td&gt;
+                        &lt;td className="py-3 px-4"&gt;{setting.numericValue}&lt;/td&gt;
+                        &lt;td className="py-3 px-4 text-center"&gt;
+                            &lt;button
+                                onClick={() =&gt; handleEditSetting(setting)}
+                                className="text-blue-500 hover:text-blue-600"&gt;
+                                &lt;FiEdit /&gt;
+                            &lt;/button&gt;
+                            &lt;button
+                                onClick={() =&gt; handleDeleteSetting(setting._id)}
+                                className="text-red-500 hover:text-red-600 ml-2"&gt;
+                                &lt;FiTrash /&gt;
+                            &lt;/button&gt;
+                        &lt;/td&gt;
+                    &lt;/tr&gt;
+                ))}
+            &lt;/tbody&gt;
+        &lt;/table&gt;
+    &lt;/div&gt;
+&lt;/div&gt;
+</code></pre>
+        </div>
+        <p>In this JSX code:</p>
+        <ul>
+          <li>
+            The settings list is displayed in a table with columns for the
+            setting name, value, and actions (edit/delete).
+          </li>
+          <li>
+            A popup appears for adding or editing settings, including input
+            fields for the setting type and value.
+          </li>
+          <li>
+            Tailwind CSS is used for styling, ensuring the component has a
+            consistent and responsive design.
+          </li>
+        </ul>
+      </div>
+    </div>
+  </body>
+</html>
