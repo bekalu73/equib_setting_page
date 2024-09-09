@@ -9,6 +9,7 @@ import {
   updateSetting,
 } from "../Redux/features/settings/settingsSlice";
 import { useDispatch, useSelector } from "react-redux";
+import type { Setting } from "../types/Types";
 
 const Setting = () => {
   const [showPopup, setShowPopup] = useState<boolean>(false);

@@ -1,26 +1,12 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
-
-// Define the initial state and types
-interface Setting {
-  _id?: string;
-  name: string;
-  numericValue: number;
-  __v?: number;
-}
-
-interface SettingsState {
-  settings: Setting[];
-  status: "idle" | "loading" | "succeeded" | "failed";
-  error: string | null;
-}
+import { Setting, SettingsState } from "../../../types/Types";
 
 const initialState: SettingsState = {
   settings: [],
   status: "idle",
   error: null,
 };
-
 // Thunks for async actions
 export const fetchSettings = createAsyncThunk(
   "settings/fetchSettings",
